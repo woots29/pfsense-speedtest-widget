@@ -1,52 +1,42 @@
-# Speedtest.net dashboard widget for pfSense
+# pfSense Speedtest.net 2 Dashboard Widget
 
-This new widget is made to replace a similar widget created in the past by Alon Noy. That widget however used the not official speedtest-cli that is no longer supported. The no longer supported version of speedtest-cli has a limitation that it can only list and connect 10 geographic chosen test servers which are in most cases never the best server for your tests. And also the test results are not the best when compared with the original speedtest-cli from speedtest.net.
+A pfSense dashboard widget that runs a Speedtest.net test using the official Ookla CLI and displays results directly in the pfSense dashboard. Forked from https://github.com/LeonStraathof/pfsense-speedtest-widget
 
-![Screenshot](https://github.com/LeonStraathof/pfsense-speedtest-widget/blob/main/Widget-screenshot.png?raw=true)
+✅ **Tested on:**  
+pfSense **2.8.0-RELEASE (amd64)**  
+Built on Thu May 22 07:12:00 PST 2025  
+FreeBSD **15.0-CURRENT**
 
-## INSTALL
+---
 
-Goto https://www.speedtest.net/apps/cli
-Click FreeBSD and find URL of newest version.
-pfSense-main-menu-->Diagnotics-->Command Prompt-->Execute Shell Command:
-(Use the URL found on the speedtest.net website and the FreeBSD version number in env ABI must match the version number in the URL)
-There is a know conflict between the not offical speedtest-cli and the offical version from speedtest.net. You can not have both installed at the same time. See this reported issue: https://github.com/LeonStraathof/pfsense-speedtest-widget/issues/2
+## Screenshot
+
+![Screenshot](https://github.com/woots29/pfsense-speedtest-widget/blob/main/speedtest2_screenshot.JPG?raw=true)
+
+---
+
+## Features
+
+- Selects **real interface** (e.g. `pppoe0`, `ix1.100`) instead of logical interface names
+- Uses official [Ookla Speedtest CLI](https://www.speedtest.net/apps/cli)
+- Displays **Download, Upload, Ping, Server, ISP**
+- Compatible with pfSense 2.8.0 / FreeBSD 15.0-CURRENT  
+
+---
+
+## Installation
+
+> ⚠ **Disclaimer:**  
+> This forces installation of the `speedtest` port on FreeBSD 15.0-CURRENT, which is not officially supported. (The latest supported OS for Speedtest is FreeBSD 13 at the time of writing.)
+> You are responsible for any risk of breakage.
 ```	
-env ABI=FreeBSD:13:x86:64 pkg add "https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-freebsd13-x86_64.pkg"
+git clone --depth 1 https://git.FreeBSD.org/ports.git /root/ports
 ```
-pfSense-main-menu-->Diagnotics-->Command Prompt-->Execute Shell Command:
 ```
-speedtest --accept-license
+cd /root/ports/net/speedtest
 ```
-pfSense-main-menu-->Diagnotics-->Command Prompt-->Execute Shell Command:
 ```
-speedtest --accept-gdpr
+env UNAME_r=14.0 ALLOW_UNSUPPORTED_SYSTEM=yes make install clean
 ```
-pfSense-main-menu-->Diagnotics-->Command Prompt-->Upload File:
-speedtest.widget.php
+Then follow the installation procedure by https://github.com/LeonStraathof/pfsense-speedtest-widget
 
-pfSense-main-menu-->Diagnotics-->Command Prompt-->Execute Shell Command:
-```
-mv -f /tmp/speedtest.widget.php /usr/local/www/widgets/widgets/
-```
-pfSense-main-menu-->Status-->Dashboard:
-Add the speedtest widget.
-	
-## UNINSTALL
-
-pfSense-main-menu-->Diagnotics-->Command Prompt-->Execute Shell Command:
-```
-pkg info | grep speedtest
-```
-pfSense-main-menu-->Diagnotics-->Command Prompt-->Execute Shell Command:
-(use the package name found in the first step)	
-```
-pkg delete -y speedtest-1.2.0.84-1.ea6b6773cf
-```
-pfSense-main-menu-->Status-->Dashboard:
-Remove the speedtest widget.
-
-pfSense-main-menu-->Diagnotics-->Command Prompt-->Execute Shell Command:
-```
-rm -f /usr/local/www/widgets/widgets/speedtest.widget.php
-```
